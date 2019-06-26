@@ -1,0 +1,3 @@
+colorOfGeneralRoll: &8
+colorOfCriticalFail: &4
+colorOfCriticalSuccess: &1
