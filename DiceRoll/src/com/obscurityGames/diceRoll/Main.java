@@ -3,6 +3,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.entity.Player;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -60,7 +61,15 @@ public class Main extends JavaPlugin {
 
             message = config.getString("messageFormat");
 			//Compose a message
-			message = message.replaceAll(Pattern.quote("${username}"), sender.getName());
+
+            String username = "";
+            if(sender instanceof Player) {
+                username = sender.getName();
+            } else {
+                username = config.getString("consoleName");
+            }
+
+            message = message.replaceAll(Pattern.quote("${username}"), username);
             message = message.replaceAll(Pattern.quote("${numberOfDice}"), Integer.toString(numberOfDice));
             message = message.replaceAll(Pattern.quote("${totalRoll}"), Integer.toString(totalRoll));
             message = message.replaceAll(Pattern.quote("${maxRoll}"), Integer.toString(sides * numberOfDice));

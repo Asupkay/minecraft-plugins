@@ -1,3 +1,4 @@
+consoleName: 'God'
 criticalSuccessText: '&6Critical Success!'
 criticalFailureText: '&4Critical Failure!'
 messageFormat: '&a${username} rolled ${numberOfDice} die and got ${totalRoll} out of ${maxRoll}. ${critical}' 
