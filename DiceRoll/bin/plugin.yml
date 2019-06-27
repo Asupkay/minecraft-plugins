@@ -1,6 +1,6 @@
 name: DiceRoll
 main: com.obscurityGames.diceRoll.Main
-version: 0.2
+version: 1.0
 api-version: 1.13
 commands:  
     roll:

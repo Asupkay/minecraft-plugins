@@ -1,5 +1,6 @@
 package com.obscurityGames.diceRoll;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Bukkit;
@@ -14,7 +15,8 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.saveDefaultConfig();
+        config.options().copyDefaults(true);
+        saveConfig();
     }
 
     @Override
@@ -55,20 +57,25 @@ public class Main extends JavaPlugin {
 				totalRoll += randomRoll;
 			}
 			
-			String colorOfGeneralRoll = ChatColor.translateAlternateColorCodes('&', config.getString("colorOfGeneralRoll"));
-			String colorOfCritFail = ChatColor.translateAlternateColorCodes('&', config.getString("colorOfCriticalFail"));
-			String colorOfCritSuccess = ChatColor.translateAlternateColorCodes('&', config.getString("colorOfCriticalSuccess"));
+
+            message = config.getString("messageFormat");
 			//Compose a message
-			message = colorOfGeneralRoll  + sender.getName() + " rolled " + numberOfDice + " die and got " + totalRoll + " out of " + sides * numberOfDice;
+			message = message.replaceAll(Pattern.quote("${username}"), sender.getName());
+            message = message.replaceAll(Pattern.quote("${numberOfDice}"), Integer.toString(numberOfDice));
+            message = message.replaceAll(Pattern.quote("${totalRoll}"), Integer.toString(totalRoll));
+            message = message.replaceAll(Pattern.quote("${maxRoll}"), Integer.toString(sides * numberOfDice));
 			
 			//If the random roll is a critical add some flavor text
+            String criticalMessage = "";
 			if(totalRoll == numberOfDice || totalRoll == numberOfDice * sides) {
 				if(totalRoll == numberOfDice) {
-					message = message + colorOfCritFail + " Critical Fail!";
+                    criticalMessage = config.getString("criticalFailureText");
 				} else {
-					message = message + colorOfCritSuccess + " Critical Success!";
+                    criticalMessage = config.getString("criticalSuccessText");
 				}
 			}
+            message = message.replaceAll(Pattern.quote("${critical}"), criticalMessage);
+            message = ChatColor.translateAlternateColorCodes('&', message);
 			
 			//Broadcast the whole message to the server
 			Bukkit.broadcastMessage(message);
