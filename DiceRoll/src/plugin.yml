@@ -12,3 +12,4 @@ permissions:
     diceroll.roll:
         description: Allows you to roll dice
         default: true
+softdepend: [RoleplayChat]
