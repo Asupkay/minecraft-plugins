@@ -1,10 +1,16 @@
 package com.obscurityGames.roleplayChat;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.configuration.file.FileConfiguration;
+
 public class Main extends JavaPlugin {
+    private FileConfiguration config = getConfig();
+
     @Override
     public void onEnable() {
-        getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        config.options().copyDefaults(true);
+        saveConfig();
+        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
     }
 
     @Override
