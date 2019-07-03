@@ -2,9 +2,11 @@ package com.obscurityGames.diceRoll;
 import java.util.Random;
 import java.util.regex.Pattern;
 
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,11 +15,19 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class Main extends JavaPlugin {
     private FileConfiguration config = getConfig();
+    private boolean roleplayChatExist = false;
+    private int range;
 
     @Override
     public void onEnable() {
         config.options().copyDefaults(true);
         saveConfig();
+        Plugin roleplayChat = getServer().getPluginManager().getPlugin("RoleplayChat");
+        if(roleplayChat != null) {
+            System.out.println("RoleplayChat Detected");
+            roleplayChatExist = true;
+            range = Integer.parseInt(roleplayChat.getConfig().getString("localRange"));
+        }
     }
 
     @Override
@@ -87,7 +97,25 @@ public class Main extends JavaPlugin {
             message = ChatColor.translateAlternateColorCodes('&', message);
             
             //Broadcast the whole message to the server
-            Bukkit.broadcastMessage(message);
+            if(roleplayChatExist && sender instanceof Player) {
+                
+                //Loop over the online players and if they are within range add them to the recipients
+                Player originalPlayer = (Player) sender;
+                Location originalLocation = originalPlayer.getLocation();
+                Player[] onlinePlayers = Bukkit.getOnlinePlayers().toArray(new Player[0]);
+                for(Player player: onlinePlayers) {
+                    if(player.getLocation().distance(originalLocation) <= range) {
+                        player.sendMessage(message);
+                    }
+                }
+
+                //If the only recipient is himself tell him he's alone
+                //if(e.getRecipients().size() == 1) {
+                //    originalPlayer.sendMessage(noOneAroundMessage);
+                //}
+            } else {
+                Bukkit.broadcastMessage(message);
+            }
             
             return true;
         }
